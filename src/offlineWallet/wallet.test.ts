@@ -65,4 +65,61 @@ describe('offlineWallet test', () => {
 		const rootPrc10 = JSON.parse(encodeStrPrc10);
 		expect(rootPrc10.type).toBe('directsecp256k1hdwallet-v1');
 	});
+
+	test('test prc20 sign chain tx', async () => {
+		const signRaw = await walletPrcXX.signTx({
+			account: {
+				address: (await walletPrcXX.account).address,
+				pubkey: null,
+				accountNumber: 1,
+				sequence: 1,
+			},
+			messages: [{
+				typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+				value: {
+					fromAddress: (await walletPrcXX.account).address,
+					toAddress: 'gx1snsqaysv9j3y3eayv887af3paj3zwqvvhtsgdy',
+					amount: [ { amount: '1000000', denom: 'uplugcn' } ],
+				},
+			}],
+			fee: {
+				gas: '200000',
+				amount: [{
+					denom: 'uplugcn',
+					amount: '200',
+				}],
+			},
+			chainId: 'plugchain_520-1'
+		});
+		const rawTx = 'Co0BCooBChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEmoKKWd4MTRmbWtlcnlmcGw2dWQ3NDh6cWV0Y3NxY3hlM2M0MGE5a3Mwa2M5EilneDFzbnNxYXlzdjlqM3kzZWF5djg4N2FmM3BhajN6d3F2dmh0c2dkeRoSCgd1cGx1Z2NuEgcxMDAwMDAwEnEKWQpPCigvZXRoZXJtaW50LmNyeXB0by52MS5ldGhzZWNwMjU2azEuUHViS2V5EiMKIQMtM/py+GupkDCx2/HGgRlquoE/nzLWR32c4p66uV5/yhIECgIIARgBEhQKDgoHdXBsdWdjbhIDMjAwEMCaDBpBVADZKf0Ei+r8dCOZKu6NbTh9ZbDTGUbDjJsFDIxGkghmNkcEfVs5qTGKce96FuHpIyH/4YfsPkkUh6Ei1bTtxRs='
+		expect(signRaw).toBe(rawTx);
+	});
+
+	test('test prc10 sign chain tx', async () => {
+		const signRaw = await walletPrcX.signTx({
+			account: {
+				address: (await walletPrcX.account).address,
+				pubkey: null,
+				accountNumber: 1,
+				sequence: 1,
+			},
+			messages: [{
+				typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+				value: {
+					fromAddress: (await walletPrcX.account).address,
+					toAddress: 'gx1snsqaysv9j3y3eayv887af3paj3zwqvvhtsgdy',
+					amount: [ { amount: '1000000', denom: 'uplugcn' } ],
+				},
+			}],
+			fee: {
+				gas: '200000',
+				amount: [{
+					denom: 'uplugcn',
+					amount: '200',
+				}],
+			},
+		});
+		const rawTx = 'Co0BCooBChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEmoKKWd4MXNuc3FheXN2OWozeTNlYXl2ODg3YWYzcGFqM3p3cXZ2aHRzZ2R5EilneDFzbnNxYXlzdjlqM3kzZWF5djg4N2FmM3BhajN6d3F2dmh0c2dkeRoSCgd1cGx1Z2NuEgcxMDAwMDAwEmgKUApGCh8vY29zbW9zLmNyeXB0by5zZWNwMjU2azEuUHViS2V5EiMKIQJv9ZzFPSZW8vb/3MmqEVFCyYe+7LyHVtGFvo+PidYsMhIECgIIARgBEhQKDgoHdXBsdWdjbhIDMjAwEMCaDBpAOZuuyK67cHsH67QSbTp68D3C+iSexy2+Wpbwku08bcluSZ8jjTf4/JlcDENb/TYf33nGVYL6Fc6a4Tj4N5y6mA=='
+		expect(signRaw).toBe(rawTx);
+	});
 });

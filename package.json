@@ -3,15 +3,20 @@
   "version": "0.0.1",
   "description": "plug chain js",
   "main": "dist/main.js",
+  "source": "src/main.ts",
+  "types": "dist/main.d.ts",
   "license": "MIT",
   "private": false,
   "scripts": {
-    "build": "",
+    "build": "parcel build",
     "test": "ts-node ./scripts/test.ts",
     "test:coverage": "ts-node ./scripts/test.ts --coverage"
   },
   "devDependencies": {
+    "@parcel/packager-ts": "2.4.1",
+    "@parcel/transformer-typescript-types": "2.4.1",
     "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.25",
     "jest": "^27.5.1",
     "parcel": "^2.4.1",
     "ts-jest": "^27.1.4",
@@ -19,6 +24,18 @@
     "typescript": "^4.6.3"
   },
   "dependencies": {
-    "@shamer.lib/proto-signing": "^0.28.1-rc2"
+    "@cosmjs/amino": "^0.28.4",
+    "@cosmjs/crypto": "^0.28.4",
+    "@cosmjs/encoding": "^0.28.4",
+    "@cosmjs/math": "^0.28.4",
+    "@cosmjs/stargate": "^0.28.4",
+    "@noble/hashes": "^1.0.0",
+    "@rsksmart/rsk-utils": "^1.1.0",
+    "@shamer.lib/proto-signing": "^0.28.1-rc2",
+    "base64-js": "^1.5.1",
+    "bech32": "^2.0.0",
+    "cosmjs-types": "^0.4.1",
+    "long": "^5.2.0",
+    "protobufjs": "^6.11.2"
   }
 }

@@ -28,9 +28,12 @@ const options: Config.Argv = {
 	testRegex: [
 		'(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$'
 	],
+	testPathIgnorePatterns: ['/proto/'],
+	coveragePathIgnorePatterns: ['/proto/'],
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	coverage: argObj.coverage,
+	runInBand: true,
 };
 
 runCLI(options, [join(__dirname, argObj.dir || '../src')]);

@@ -3,3 +3,8 @@ coverage
 
 .vscode
 http
+
+dist
+
+.parcel-cache
+yarn-error.log
