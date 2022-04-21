@@ -1,5 +1,3 @@
-
-   
 declare module '@rsksmart/rsk-utils' {
   export function b32encode(data: Buffer): string
   export function b32decode(data: string): Buffer
@@ -12,6 +10,7 @@ declare module '@rsksmart/rsk-utils' {
   export function encodeCheck(type: string, data: Buffer): string
   export function decodeCheck(type: string, data: string): Buffer
   export function calculateChecksum(data: any): any
+  export function bufferToHex(buffer: Buffer): string;
 
   // export function xrpCodex(data: any): any;
   export function ua2hex(data: any): any

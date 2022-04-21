@@ -1,8 +1,10 @@
+import { toBN } from 'web3-utils';
 import { offlineWalletOptions } from '../config';
 import { OfflineWallet, byMnemonicX, byMnemonicXX } from ".";
 
 describe('offlineWallet test', () => {
 	const demoMnemonicStr = 'pitch text slow much leave myth absorb silent blossom mechanic again merge';
+	const demoPrivateStr = '0x66be98bee34f08feb9df314d3382534dd02ef89eed422330ff9167a379316ca1';
 	let walletPrcX: OfflineWallet;
 	let walletPrcXX: OfflineWallet;
 	beforeAll(async () => {
@@ -121,5 +123,36 @@ describe('offlineWallet test', () => {
 		});
 		const rawTx = 'Co0BCooBChwvY29zbW9zLmJhbmsudjFiZXRhMS5Nc2dTZW5kEmoKKWd4MXNuc3FheXN2OWozeTNlYXl2ODg3YWYzcGFqM3p3cXZ2aHRzZ2R5EilneDFzbnNxYXlzdjlqM3kzZWF5djg4N2FmM3BhajN6d3F2dmh0c2dkeRoSCgd1cGx1Z2NuEgcxMDAwMDAwEmgKUApGCh8vY29zbW9zLmNyeXB0by5zZWNwMjU2azEuUHViS2V5EiMKIQJv9ZzFPSZW8vb/3MmqEVFCyYe+7LyHVtGFvo+PidYsMhIECgIIARgBEhQKDgoHdXBsdWdjbhIDMjAwEMCaDBpAOZuuyK67cHsH67QSbTp68D3C+iSexy2+Wpbwku08bcluSZ8jjTf4/JlcDENb/TYf33nGVYL6Fc6a4Tj4N5y6mA=='
 		expect(signRaw).toBe(rawTx);
+	});
+
+	test('test pvm call', async () => {
+		const walletPrcXX = await byMnemonicXX(demoMnemonicStr);
+		const resData = walletPrcXX.getContractData({
+			callFunc: 'balanceOf(address)',
+			callArgs: [
+				'0xaa776c8c890ff5c6faa71032bc401836638abfa5'
+			]
+		});
+		expect(resData).toBe('0x70a08231000000000000000000000000aa776c8c890ff5c6faa71032bc401836638abfa5');
+	});
+
+
+	test('test sign pvm call', async () => {
+		const walletPrcXX = await byMnemonicXX(demoMnemonicStr);
+		const resData = await walletPrcXX.signContractData({
+			callFunc: 'transfer(address,uint256)',
+			callArgs: [
+				'0x21eA42ED4Bb690fe4B14edA7653d53Eb1c1326BB',
+				toBN('1').mul(toBN('10').pow(toBN('18'))).toString('hex')
+			],
+			config: {
+				to: '0xF20C0fa5c683aa29179F27070D5a72ce779B86ED',
+				gasLimit: 0x8b14,
+				gasPrice: 0x1b,
+				nonce: 6,
+				value: 0,
+			}
+		});
+		expect(resData).toBe('0xf8a6061b828b1494f20c0fa5c683aa29179f27070d5a72ce779b86ed80b844a9059cbb00000000000000000000000021ea42ed4bb690fe4b14eda7653d53eb1c1326bb0000000000000000000000000000000000000000000000000de0b6b3a7640000820434a0664db8d44c154eeb28ffd4ef6c2e133190abe08a7fd8fb9064fbe680b3bab99ca060e18828a12e01b95bd9c3564fa81562cef30a93154eb6c867b2bf70253d1608');
 	});
 });

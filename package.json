@@ -29,6 +29,8 @@
     "@cosmjs/encoding": "^0.28.4",
     "@cosmjs/math": "^0.28.4",
     "@cosmjs/stargate": "^0.28.4",
+    "@ethereumjs/common": "^2.6.4",
+    "@ethereumjs/tx": "^3.5.1",
     "@noble/hashes": "^1.0.0",
     "@rsksmart/rsk-utils": "^1.1.0",
     "@shamer.lib/proto-signing": "^0.28.1-rc2",
@@ -36,6 +38,10 @@
     "bech32": "^2.0.0",
     "cosmjs-types": "^0.4.1",
     "long": "^5.2.0",
-    "protobufjs": "^6.11.2"
+    "protobufjs": "^6.11.2",
+    "web3": "^1.7.3",
+    "web3-core": "^1.7.3",
+    "web3-eth": "^1.7.3",
+    "web3-eth-accounts": "^1.7.3"
   }
 }

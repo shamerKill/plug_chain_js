@@ -7,17 +7,19 @@ import { fromByteArray } from 'base64-js';
 import { keccak_256 } from '@noble/hashes/sha3';
 import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 import { Any } from 'cosmjs-types/google/protobuf/any';
+import { sha3, isHex, stripHexPrefix, toTwosComplement, hexToBytes, bytesToHex, toHex } from 'web3-utils';
+import { Transaction, TxData } from '@ethereumjs/tx';
+import Common, { Hardfork } from '@ethereumjs/common';
 import { InWalletOptions } from '../@types';
 import { offlineWalletOptions } from '../config';
-import { accountPubKeyFormat } from '../tools';
+import { accountPubKeyFormat, bufferToHex } from '../tools';
 import { PubKey } from '../../proto';
 
-
 export class OfflineWallet {
-	private _wallet: DirectSecp256k1HdWallet;
-	private _options: InWalletOptions;
-	private _accounts?: AccountData[];
-	private get accounts () {
+	protected _wallet: DirectSecp256k1HdWallet;
+	protected _options: InWalletOptions;
+	protected _accounts?: AccountData[];
+	protected get accounts () {
 		return new Promise<AccountData[]>(async (resolve) => {
 			if (this._accounts === undefined) {
 				this._accounts = [...await this._wallet.getAccounts()];
@@ -25,7 +27,12 @@ export class OfflineWallet {
 			resolve(this._accounts);
 		});
 	};
-	
+	protected get _hexPrivateKey (): Promise<string> {
+		return (this._wallet as any).getAccountsWithPrivkeys().then((res: any[]) => {
+			return bufferToHex(res[0].privkey, true);
+		});
+	}
+
 	constructor(
 		wallet: DirectSecp256k1HdWallet,
 		options?: Partial<InWalletOptions>
@@ -103,5 +110,35 @@ export class OfflineWallet {
 		const raw = TxRaw.encode(result).finish();
 		const rawTx = fromByteArray(raw);
 		return rawTx;
+	}
+	/**
+	 * pvm contract call data to hex
+	**/
+	public getContractData({ callFunc, callArgs }: { callFunc: string, callArgs: string[] }): string {
+		let data = sha3(callFunc)?.slice(0, 10)!;
+		for (const arg of callArgs) {
+			if (isHex(arg)) data += stripHexPrefix(toTwosComplement(arg));
+			else data += stripHexPrefix(toTwosComplement(toHex(arg)??''));
+		}
+		return data;
+	}
+	/**
+	 * pvm sign transfer data
+	**/
+	public async signContractData(
+		{ callFunc, callArgs, config }: { callFunc: string, callArgs: string[], config?: TxData }
+	) {
+		const _config = { ...config };
+		_config.data = this.getContractData({ callFunc, callArgs });
+		const tx = new Transaction(_config, {
+			common: Common.custom({
+				chainId: parseInt(this._options.chainId),
+				networkId: parseInt(this._options.chainId),
+				defaultHardfork: Hardfork.Petersburg,
+			}, {
+				baseChain: 'mainnet'
+			}),
+		});
+		return bytesToHex(Array.from(tx.sign(Buffer.from(hexToBytes(await this._hexPrivateKey))).serialize()));
 	}
 }

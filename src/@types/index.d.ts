@@ -1,5 +1,1 @@
-import { InWalletOptions } from './wallet';
-
-export {
-	InWalletOptions,
-}
+export * from './wallet';
