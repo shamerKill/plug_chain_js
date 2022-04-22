@@ -1,5 +1,5 @@
 import {
-	plugToHex, hexToPlug,
+	plugToHex, hexToPlug, isPlugAddress,
 } from './address';
 
 
@@ -11,5 +11,10 @@ describe('test address exchange', () => {
 	});
 	it('test hex address to plug Address', () => {
 		expect(hexToPlug(hexAddress)).toBe(plugAddress);
+	});
+	it('test plug address match', () => {
+		expect(isPlugAddress(hexAddress)).toBeFalsy();
+		expect(isPlugAddress(plugAddress)).toBeTruthy();
+		expect(isPlugAddress()).toBeFalsy();
 	});
 });

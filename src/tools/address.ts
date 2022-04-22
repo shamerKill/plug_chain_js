@@ -4,6 +4,8 @@ import {
 } from '@rsksmart/rsk-utils';
 import { bech32 } from 'bech32';
 
+const prefixText = 'gx';
+
 function makeChecksummedHexDecoder() {
   return (data: string) => {
     return Buffer.from(stripHexPrefix(data), 'hex');
@@ -38,7 +40,7 @@ const bech32Chain = (prefix: string) => ({
 
 
 const ETH = hexChecksumChain();
-const PLUG = bech32Chain('gx');
+const PLUG = bech32Chain(prefixText);
 
 export const hexToPlug = (ethAddress: string) => {
   const data = ETH.decoder(ethAddress);
@@ -49,3 +51,5 @@ export const plugToHex = (plugAddress: string) => {
   const data = PLUG.decoder(plugAddress);
   return ETH.encoder(data);
 };
+
+export const isPlugAddress = (address?: string) => new RegExp(`^${prefixText}[0-9|a-zA-Z]{39}$`).test(address??'');

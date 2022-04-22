@@ -1,6 +1,7 @@
 import { toBN } from 'web3-utils';
 import { offlineWalletOptions } from '../config';
 import { OfflineWallet, byMnemonicX, byMnemonicXX } from ".";
+import { hexToPlug } from '../tools';
 
 describe('offlineWallet test', () => {
 	const demoMnemonicStr = 'pitch text slow much leave myth absorb silent blossom mechanic again merge';
@@ -130,29 +131,34 @@ describe('offlineWallet test', () => {
 		const resData = walletPrcXX.getContractData({
 			callFunc: 'balanceOf(address)',
 			callArgs: [
-				'0xaa776c8c890ff5c6faa71032bc401836638abfa5'
+				'gx14fmkeryfpl6ud748zqetcsqcxe3c40a9ks0kc9'
 			]
 		});
 		expect(resData).toBe('0x70a08231000000000000000000000000aa776c8c890ff5c6faa71032bc401836638abfa5');
-	});
 
+		const resDataMore = walletPrcXX.getContractData({ callFunc: 'test(value)', callArgs: [ 'hello' ] });
+		expect(resDataMore).toBe('0xf7a7adc100000000000000000000000000000000000000000000000000000068656c6c6f');
+
+		const resDataFunc = walletPrcXX.getContractData({ callFunc: 'test()', callArgs: [] });
+		expect(resDataFunc).toBe('0xf8a8fd6d');
+	});
 
 	test('test sign pvm call', async () => {
 		const walletPrcXX = await byMnemonicXX(demoMnemonicStr);
 		const resData = await walletPrcXX.signContractData({
 			callFunc: 'transfer(address,uint256)',
 			callArgs: [
-				'0x21eA42ED4Bb690fe4B14edA7653d53Eb1c1326BB',
+				'gx14fmkeryfpl6ud748zqetcsqcxe3c40a9ks0kc9',
 				toBN('1').mul(toBN('10').pow(toBN('18'))).toString('hex')
 			],
 			config: {
-				to: '0xF20C0fa5c683aa29179F27070D5a72ce779B86ED',
+				to: 'gx17gxqlfwxsw4zj9ulyurs6knjeemehphd75pyc5',
 				gasLimit: 0x8b14,
 				gasPrice: 0x1b,
 				nonce: 6,
 				value: 0,
 			}
 		});
-		expect(resData).toBe('0xf8a6061b828b1494f20c0fa5c683aa29179f27070d5a72ce779b86ed80b844a9059cbb00000000000000000000000021ea42ed4bb690fe4b14eda7653d53eb1c1326bb0000000000000000000000000000000000000000000000000de0b6b3a7640000820434a0664db8d44c154eeb28ffd4ef6c2e133190abe08a7fd8fb9064fbe680b3bab99ca060e18828a12e01b95bd9c3564fa81562cef30a93154eb6c867b2bf70253d1608');
+		expect(resData).toBe('0xf8a6061b828b1494f20c0fa5c683aa29179f27070d5a72ce779b86ed80b844a9059cbb000000000000000000000000aa776c8c890ff5c6faa71032bc401836638abfa50000000000000000000000000000000000000000000000000de0b6b3a7640000820434a01a8cd29308a5383f8488d1e7f8fd6fbf9654fdd6e9e636bb0c087e0487d24d4fa05997fe4f6e320846a1988df9e4b358ecced2af18f4172692a45f81cef9df5470');
 	});
 });

@@ -12,7 +12,7 @@ import { Transaction, TxData } from '@ethereumjs/tx';
 import Common, { Hardfork } from '@ethereumjs/common';
 import { InWalletOptions } from '../@types';
 import { offlineWalletOptions } from '../config';
-import { accountPubKeyFormat, bufferToHex } from '../tools';
+import { accountPubKeyFormat, bufferToHex, isPlugAddress, plugToHex} from '../tools';
 import { PubKey } from '../../proto';
 
 export class OfflineWallet {
@@ -116,7 +116,8 @@ export class OfflineWallet {
 	**/
 	public getContractData({ callFunc, callArgs }: { callFunc: string, callArgs: string[] }): string {
 		let data = sha3(callFunc)?.slice(0, 10)!;
-		for (const arg of callArgs) {
+		for (let arg of callArgs) {
+			if (isPlugAddress(arg)) arg = plugToHex(arg);
 			if (isHex(arg)) data += stripHexPrefix(toTwosComplement(arg));
 			else data += stripHexPrefix(toTwosComplement(toHex(arg)??''));
 		}
@@ -130,6 +131,7 @@ export class OfflineWallet {
 	) {
 		const _config = { ...config };
 		_config.data = this.getContractData({ callFunc, callArgs });
+		if (typeof _config.to === 'string' && isPlugAddress(_config.to)) _config.to = plugToHex(_config.to);
 		const tx = new Transaction(_config, {
 			common: Common.custom({
 				chainId: parseInt(this._options.chainId),
